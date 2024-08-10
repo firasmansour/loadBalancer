@@ -1,0 +1,5 @@
+#!/bin/bash
+
+chmod +x lb.run
+
+sudo python loadBalancer.py
