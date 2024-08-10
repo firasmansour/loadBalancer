@@ -63,7 +63,7 @@ def getNextServer(req_type, req_time):
     if req_type == "V" or req_type == "P":
         if previous_server == 1:
             next_server = 2
-        else if previous_server == 2 :
+        elif previous_server == 2 :
             next_server = 1
     else 
         next_server = 3
