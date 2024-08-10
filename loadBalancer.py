@@ -65,7 +65,7 @@ def getNextServer(req_type, req_time):
             next_server = 2
         elif previous_server == 2 :
             next_server = 1
-    else 
+    else:
         next_server = 3
     previous_server = next_server
     lock.release()
