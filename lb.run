@@ -1,13 +1,6 @@
 #!/bin/bash
-# lb.run: A script to compile and run the Python load balancer code
 
 
-# Compile the Python script (optional step)
-# This step is necessary only if you want to create a bytecode file (.pyc)
-python3 -m compileall loadBalancer.py
+sudo python -m compileall loadBalancer.pyc
 
-# Execute the compiled Python script or the original script
-python3 loadBalancer.py
-
-# Or, if you want to run the bytecode
-# python3 __pycache__/loadBalancer.cpython-<version>.pyc
+sudo python loadBalancer.pyc
