@@ -1,6 +1,3 @@
 #!/bin/bash
 
-
-sudo python -m compileall loadBalancer.pyc
-
 sudo python loadBalancer.pyc
