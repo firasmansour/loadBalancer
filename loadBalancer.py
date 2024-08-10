@@ -75,8 +75,6 @@ def processQueue():
             data = serv_sock.recv(2)
             client_sock.sendall(data)
         except Exception as e:
-            LBPrint(f'Error processing request: {e}')
-            client_sock.sendall(b'Error')
         finally:
             client_sock.close()
 
