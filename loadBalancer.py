@@ -84,21 +84,53 @@ def getNextServer(req_type, req_time):
     global s2
     global s3
     lock.acquire()
+    t = float(req_time)
     if req_type == "V" or req_type == "P":
-        if s2 >= s1:
-            next_server = 1
-            s1 += float(req_time)
+    #if there is a pressure on the servers 1 and 2 and the server 3 is in a better state give some of the request to it in some conditions
+        if s2 > 10 and s1 > 10 and s3 < 15 :
+            if req_type == "V" and (v3 == 0 or req_time < 4) 
+                next_server = 3
+                s3 += (t*3)
+            else if req_type == "P" and (v3 == 0 or req_time < 5) 
+                next_server = 3
+                s3 += (t*2)
+            else:
+                if s2 >= s1:
+                    next_server = 1
+                    s1 += t
 
-        else: 
-            next_server = 2
-            s2 += float(req_time)
-    else:
+                else: 
+                    next_server = 2
+                    s2 += t
+            lock.release()
+            return next_server
+        #normally we want the trafic to go to the servers designed for video 1 , 2             
+        else:
+            if s2 >= s1:
+                next_server = 1
+                s1 += t
+
+            else: 
+                next_server = 2
+                s2 += t        
+        lock.release()
+        return next_server    
+        
+    else if req_type == "M":
+        if s3 >= 15 and s2 <= 10 and s1 <= 10 and (s2 == 0 or s1 == 0 or req_time < 5) :
+            if s2 >= s1:
+                next_server = 1
+                s1 += (t * 2)
+            else:
+                next_server = 2
+                s2 += (t * 2)
+            lock.release()
+            return next_server 
+         
         next_server = 3
-        s3 += float(req_time)
-    previous_server = next_server
-    realTime = timeInServer(next_server,req_type,req_time)
+        s3 += t
     lock.release()
-    return (next_server , realTime)
+    return next_server 
 
 
 def parseRequest(req):
@@ -117,7 +149,8 @@ class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
         client_sock = self.request
         req = client_sock.recv(2)
         req_type, req_time = parseRequest(req)
-        servID , realTime = getNextServer(req_type, req_time)
+        servID  = getNextServer(req_type, req_time)
+        realTime = timeInServer(servID,req_type,req_time)
         LBPrint('recieved request %s from %s, sending to %s' % (req, self.client_address[0], getServerAddr(servID)))
         serv_sock = getServerSocket(servID)
         serv_sock.sendall(req)
