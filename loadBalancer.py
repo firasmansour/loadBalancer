@@ -91,7 +91,7 @@ def getNextServer(req_type, req_time):
             if req_type == "V" and (v3 == 0 or req_time < 4): 
                 next_server = 3
                 s3 += (t*3)
-            else if req_type == "P" and (v3 == 0 or req_time < 5): 
+            elif  req_type == "P" and (v3 == 0 or req_time < 5): 
                 next_server = 3
                 s3 += (t*2)
             else:
@@ -116,7 +116,7 @@ def getNextServer(req_type, req_time):
         lock.release()
         return next_server    
         
-    else if req_type == "M":
+    elif  req_type == "M":
         if s3 >= 15 and s2 <= 10 and s1 <= 10 and (s2 == 0 or s1 == 0 or req_time < 5) :
             if s2 >= s1:
                 next_server = 1
