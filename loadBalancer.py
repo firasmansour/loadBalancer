@@ -85,18 +85,15 @@ def getNextServer(req_type, req_time):
     global s3
     lock.acquire()
     if req_type == "V" or req_type == "P":
-        if previous_server == 1:
+        if s2 >= s1:
+            next_server = 1
+            s1 += float(req_time)
+
+        else: 
             next_server = 2
             s2 += float(req_time)
-
-        elif previous_server == 2 :
-            next_server = 1
-            s1 += float(req_time)
-        else: 
-            next_server = 1
-            s1 += float(req_time)
     else:
-        if s3 >= 20:
+        if s3 >= 10:
             if s2 >= s1:
                 next_server = 1
                 s1 += (float(req_time) * 2)
