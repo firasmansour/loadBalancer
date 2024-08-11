@@ -1,6 +1,4 @@
 #!/bin/bash
 
 
-sudo -m compileall loadBalancer.py
-
-sudo python loadBalancer.pyc
+sudo python loadBalancer.py
