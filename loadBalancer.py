@@ -88,10 +88,10 @@ def getNextServer(req_type, req_time):
     if req_type == "V" or req_type == "P":
     #if there is a pressure on the servers 1 and 2 and the server 3 is in a better state give some of the request to it in some conditions
         if s2 > 10 and s1 > 10 and s3 < 15 :
-            if req_type == "V" and (v3 == 0 or req_time < 4) 
+            if req_type == "V" and (v3 == 0 or req_time < 4): 
                 next_server = 3
                 s3 += (t*3)
-            else if req_type == "P" and (v3 == 0 or req_time < 5) 
+            else if req_type == "P" and (v3 == 0 or req_time < 5): 
                 next_server = 3
                 s3 += (t*2)
             else:
