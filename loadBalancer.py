@@ -67,24 +67,25 @@ def getNextServer(req_type, req_time):
     if req_type == "V" or req_type == "P":
         if previous_server == 1:
             next_server = 2
-            s2 += (int)req_time
+            s2 += int(req_time)
+
         elif previous_server == 2 :
             next_server = 1
-            s1 += (int)req_time
+            s1 += int(req_time)
         else: 
             next_server = 1
-            s1 += (int)req_time
+            s1 += int(req_time)
     else:
         if s3 >= 20:
             if s2 >= s1:
                 next_server = 1
-                s1 += ((int)req_time * 2)
+                s1 += (int(req_time) * 2)
             else:
                 next_server = 2
-                s2 += ((int)req_time * 2)
+                s2 += (int(req_time) * 2)
         else: 
             next_server = 3
-            s3 += (int)req_time
+            s3 += int(req_time)
     previous_server = next_server
     lock.release()
     return next_server
