@@ -99,7 +99,7 @@ def parseRequest(req):
 class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        global lock2
+        
         lock2.acquire
         client_sock = self.request
         req = client_sock.recv(2)
@@ -112,7 +112,7 @@ class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
         
         client_sock.sendall(data)
         client_sock.close()
-        lock2.release
+        
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
