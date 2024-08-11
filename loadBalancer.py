@@ -17,7 +17,27 @@ def LBPrint(string):
 
 
 
-
+def timeInServer(serverId,req_type, req_time):
+    t = float(reqTime)
+    
+    if req_type == 'P':
+        if serverId == 3:
+            return t * 2
+        else:
+            return t
+    if req_type == 'M':
+        if serverId == 3:
+            return t
+        else:
+            return t * 2
+    if req_type == 'V':
+        if serverId == 3:
+            return t * 3
+        else:
+            return t
+            
+    servPrint('recieved unknown request')
+    sys.exit()
 
 
 
@@ -67,28 +87,29 @@ def getNextServer(req_type, req_time):
     if req_type == "V" or req_type == "P":
         if previous_server == 1:
             next_server = 2
-            s2 += int(req_time)
+            s2 += float(req_time)
 
         elif previous_server == 2 :
             next_server = 1
-            s1 += int(req_time)
+            s1 += float(req_time)
         else: 
             next_server = 1
-            s1 += int(req_time)
+            s1 += float(req_time)
     else:
         if s3 >= 20:
             if s2 >= s1:
                 next_server = 1
-                s1 += (int(req_time) * 2)
+                s1 += float(req_time) * 2)
             else:
                 next_server = 2
-                s2 += (int(req_time) * 2)
+                s2 += float(req_time) * 2)
         else: 
             next_server = 3
-            s3 += int(req_time)
+            s3 += float(req_time)
     previous_server = next_server
+    realTime = timeInServer(next_server,req_type,req_time)
     lock.release()
-    return next_server
+    return (next_server , realTime)
 
 
 def parseRequest(req):
@@ -99,20 +120,25 @@ def parseRequest(req):
 class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
-        
+        global lock2
         lock2.acquire
         client_sock = self.request
         req = client_sock.recv(2)
         req_type, req_time = parseRequest(req)
-        servID = getNextServer(req_type, req_time)
+        servID , realTime = getNextServer(req_type, req_time)
         LBPrint('recieved request %s from %s, sending to %s' % (req, self.client_address[0], getServerAddr(servID)))
         serv_sock = getServerSocket(servID)
         serv_sock.sendall(req)
         data = serv_sock.recv(2)
-        
+        if servID == 1:
+            s1 -= realTime
+        elif servID == 2:
+            s2 -= realTime
+        elif servID == 3:
+            s3 -= realTime
         client_sock.sendall(data)
         client_sock.close()
-        
+        lock2.release
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
