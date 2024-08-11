@@ -1,12 +1,13 @@
-# uncompyle6 version 3.9.2
-# Python bytecode version base 2.7 (62211)
-# Decompiled from: Python 3.12.5 (tags/v3.12.5:ff3bc82, Aug  6 2024, 20:45:27) [MSC v.1940 64 bit (AMD64)]
-# Embedded file name: ./exampleLB.py
-# Compiled at: 2015-12-28 12:42:45
 import socket, SocketServer, Queue, sys, time, threading
 HTTP_PORT = 80
 previous_server = 3
+s1 = 0
+s2 = 0
+s3 = 0
+
 lock = threading.Lock()
+lock2 = threading.Lock()
+
 SERV_HOST = '10.0.0.1'
 servers = {'serv1': ('192.168.0.101', None), 'serv2': ('192.168.0.102', None), 'serv3': ('192.168.0.103', None)}
 
@@ -59,16 +60,31 @@ def getServerAddr(servID):
 def getNextServer(req_type, req_time):
     global lock
     global previous_server
+    global s1
+    global s2
+    global s3
     lock.acquire()
     if req_type == "V" or req_type == "P":
         if previous_server == 1:
             next_server = 2
+            s2 += req_time
         elif previous_server == 2 :
             next_server = 1
+            s1 += req_time
         else: 
             next_server = 1
+            s1 += req_time
     else:
-        next_server = 3
+        if s3 >= 20:
+            if s2 >= s1:
+                next_server = 1
+                s1 += (req_time * 2)
+            else:
+                next_server = 2
+                s2 += (req_time * 2)
+        else: 
+            next_server = 3
+            s3 += req_time
     previous_server = next_server
     lock.release()
     return next_server
@@ -82,6 +98,8 @@ def parseRequest(req):
 class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
+        global lock2
+        lock2.acquire
         client_sock = self.request
         req = client_sock.recv(2)
         req_type, req_time = parseRequest(req)
@@ -90,8 +108,10 @@ class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
         serv_sock = getServerSocket(servID)
         serv_sock.sendall(req)
         data = serv_sock.recv(2)
+        
         client_sock.sendall(data)
         client_sock.close()
+        lock2.release
 
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
