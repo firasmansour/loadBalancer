@@ -99,10 +99,10 @@ def getNextServer(req_type, req_time):
         if s3 >= 20:
             if s2 >= s1:
                 next_server = 1
-                s1 += float(req_time) * 2)
+                s1 += (float(req_time) * 2)
             else:
                 next_server = 2
-                s2 += float(req_time) * 2)
+                s2 += (float(req_time) * 2)
         else: 
             next_server = 3
             s3 += float(req_time)
