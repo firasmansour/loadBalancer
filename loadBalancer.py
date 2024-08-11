@@ -120,6 +120,9 @@ def parseRequest(req):
 class LoadBalancerRequestHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
+        global s1
+        global s2
+        global s3
         global lock2
         lock2.acquire
         client_sock = self.request
