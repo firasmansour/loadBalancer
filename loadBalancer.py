@@ -93,16 +93,8 @@ def getNextServer(req_type, req_time):
             next_server = 2
             s2 += float(req_time)
     else:
-        if s3 >= 10:
-            if s2 >= s1:
-                next_server = 1
-                s1 += (float(req_time) * 2)
-            else:
-                next_server = 2
-                s2 += (float(req_time) * 2)
-        else: 
-            next_server = 3
-            s3 += float(req_time)
+        next_server = 3
+        s3 += float(req_time)
     previous_server = next_server
     realTime = timeInServer(next_server,req_type,req_time)
     lock.release()
