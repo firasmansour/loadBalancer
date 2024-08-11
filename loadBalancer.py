@@ -18,7 +18,7 @@ def LBPrint(string):
 
 
 def timeInServer(serverId,req_type, req_time):
-    t = float(reqTime)
+    t = float(req_time)
     
     if req_type == 'P':
         if serverId == 3:
